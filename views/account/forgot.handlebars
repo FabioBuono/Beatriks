@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="panel">
+    <div class="panel-body">
+      {{#if messages.info}}
+        <div role="alert" class="alert alert-info">
+          {{#each messages.info}}
+            <div>{{msg}}</div>
+          {{/each}}
+        </div>
+      {{/if}}
+      {{#if messages.error}}
+        <div role="alert" class="alert alert-danger">
+          {{#each messages.error}}
+            <div>{{msg}}</div>
+          {{/each}}
+        </div>
+      {{/if}}
+      <form method="POST">
+        <legend>Password Dimenticata?</legend>
+        <div class="form-group">
+          <p>Inserisci la Tua Email.</p>
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" placeholder="Email" class="form-control" autofocus>
+        </div>
+        <button type="submit" class="btn btn-success">Reset Password</button>
+      </form>
+    </div>
+  </div>
+</div>

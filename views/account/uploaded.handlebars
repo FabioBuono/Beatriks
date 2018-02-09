@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="panel">
+    <div class="panel-body">
+      {{#if messages.info}}
+      <div role="alert" class="alert alert-info">
+        {{#each messages.info}}
+        <div>{{msg}}</div>
+        {{/each}}
+      </div>
+      {{/if}} {{#if messages.error}}
+      <div role="alert" class="alert alert-danger">
+        {{#each messages.error}}
+        <div>{{msg}}</div>
+        {{/each}}
+      </div>
+      {{/if}} 
+      
+
+ <div style="text-align:center">
+ File con id: <h1>{{fileName}}</h1>caricato correttamente <br><br>
+ utente: {{user.email}} <br>
+ <h1>Nome Originale: {{originalName}} salvato in mongodb</h1>
+ </div>
+     
