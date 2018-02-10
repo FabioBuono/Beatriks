@@ -2,6 +2,7 @@ const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+var filen;
 
 exports.getFileUpload = (req, res) => {
   if (req.isAuthenticated()) {
@@ -37,7 +38,32 @@ exports.postFileUpload = async (req, res) => {
   form.parse(req);
 };
 
+exports.getFileUploadOne = (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render('account/uploaded', {
+      user: req.user
+    });
+ } else res.redirect('/');
+};
 
+exports.postFileUploadOne = (req, res) => {
+// create an incoming form object
+var form = new formidable.IncomingForm();
+// parse the incoming request containing the form data
+form.parse(req);
+
+    form.on('fileBegin', function (name, file){
+        file.path = path.join(__dirname, '../uploads/'); 
+        file.path += file.name;
+    });
+
+    form.on('file', function (name, file){
+        console.log('Uploaded ' + file.name);
+    });
+    res.render('account/uploaded', {
+      user: req.user
+    });
+  }
 
 //https://evdokimovm.github.io/javascript/nodejs/expressjs/multer/2016/11/03/Upload-files-to-server-using-NodeJS-and-Multer-package-filter-upload-files-by-extension.html
 

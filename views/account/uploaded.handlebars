@@ -33,9 +33,9 @@
             <h1>Beatriks</h1>
             <br>
             <h2>Single File Upload</h2>
-            <form id="uploadForm" enctype="multipart/form-data" method="post">
-              <input type="file" name="File" />
-              <input type="submit" value="Upload File" name="submit">
+            <form action="/uploaded" enctype="multipart/form-data" method="post">
+              <input type="file" name="upload" multiple>
+              <input type="submit" value="Upload">
             </form>
           </div>
         </div>

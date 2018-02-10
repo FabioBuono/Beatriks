@@ -30,9 +30,11 @@ var HomeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
 var uploadController = require('./controllers/upload');
+// Express
+var app = express();
+
 // Passport OAuth strategies
 require('./config/passport');
-var app = express();
 /*********************************/
 /**  Mongoose CONFIGURATION     **/
 /*********************************/
@@ -130,7 +132,7 @@ app.use(helmet({
   frameguard: {
     action: 'deny'
   }
-}));
+})); 
 /*
 // Content Security Policy Per Risorse Esterne
 app.use(helmet.contentSecurityPolicy({
@@ -140,6 +142,7 @@ app.use(helmet.contentSecurityPolicy({
   }
 }))
 */
+
 /*********************************/
 /**    Application Routes       **/
 /*********************************/
@@ -165,7 +168,9 @@ app.get(    '/auth/google',            passport.authenticate('google', { scope: 
 app.get(    '/auth/google/callback',   passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login' }));
 app.get(    '/upload',           uploadController.getFileUpload);
 app.post(   '/upload',           uploadController.postFileUpload);
-//app.get(    '/list',             uploadController.getFileList);
+app.get(    '/uploaded',           uploadController.getFileUploadOne);
+app.post(   '/uploaded',           uploadController.postFileUploadOne);
+
 app.all('*', (req, res) => {
    res.status(404).sendFile(path.join(__dirname + '/public/404.html'));
 });
