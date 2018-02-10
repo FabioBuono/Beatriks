@@ -1,71 +1,45 @@
-var express          = require('express');
-var path             = require('path');
-var logger           = require('morgan');
-var compression      = require('compression');
-var methodOverride   = require('method-override');
-var session          = require('express-session');
-var flash            = require('express-flash');
-var bodyParser       = require('body-parser');
+var express = require('express');
+var path = require('path');
+var logger = require('morgan');
+var compression = require('compression');
+var methodOverride = require('method-override');
+var session = require('express-session');
+var flash = require('express-flash');
+var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
-var dotenv           = require('dotenv');
-var exphbs           = require('express-handlebars');
-var mongoose         = require('mongoose');
-var passport         = require('passport');
-const multer         = require('multer');
-const cors           = require('cors');
-const fs             = require('fs');
-const chalk          = require('chalk');
-const os             = require('os');
-const Loki           = require('lokijs');
-const helmet         = require('helmet');
+var dotenv = require('dotenv');
+var exphbs = require('express-handlebars');
+var mongoose = require('mongoose');
+var passport = require('passport');
+const cors = require('cors');
+const fs = require('fs');
+const chalk = require('chalk');
+const os = require('os');
+const helmet = require('helmet');
 
 
 /************************************/
 /**       Basic Configuration     **/
 /************************************/
-// Used for upload
-const User = require('./models/User');
-
-/** Syntactic Sugar **/
 const log  = console.log;
 const info = chalk.bold.yellow;
 const ok   = chalk.green('✓');
 const ex   = chalk.red('✗');
 
-//File Database Setup
-const DB_NAME         = 'db.json';
-const COLLECTION_NAME = 'lessons';
-const UPLOAD_PATH     = 'uploads';
-const upload          = multer({ dest: `${UPLOAD_PATH}/` });
-const db              = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 
-/* Memory DB Helper */
-var loadCollection = function (colName, db) {
-  return new Promise(function (resolve) {
-    db.loadDatabase({}, function () {
-      var _collection = db.getCollection(colName) || db.addCollection(colName);
-      resolve(_collection);
-    });
-  });
-};
-
-// Load variables from .env file to process.env
+// Load environment variables from .env file
 dotenv.load();
 
 // Controllers
-var HomeController    = require('./controllers/home');
-var userController    = require('./controllers/user');
+var HomeController = require('./controllers/home');
+var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
-var uploadController  = require('./controllers/upload');
+var uploadController = require('./controllers/upload');
 
 
-//Instanciate Express
-const app = express();
-
-// Passport OAuth strategies (after app=express; !!!)
+// Passport OAuth strategies
 require('./config/passport');
-
-
+var app = express();
 
 /*********************************/
 /**  Mongoose CONFIGURATION     **/
@@ -73,15 +47,13 @@ require('./config/passport');
 
 //set global promises for mongo
 mongoose.Promise = global.Promise;
-
 //connection to mongo db
 mongoose.connect(process.env.MONGODB)
-  .then(log('\n-- %s Connessione a Mongo eseguita ', ok));
-
+  .then(log('\n-- %s MongoDb Connection Established ', ok));
 //mongodb connection error handler
 mongoose.connection.on('error', function () {
   console.error(err);
-  log('%s MongoDB: errore di connessione. Controlla se il servizio è attivo.', ex);
+  log('%s MongoDB: connection error - Check for service running.', ex);
   process.exit(1);
 });
 
@@ -89,17 +61,16 @@ mongoose.connection.on('error', function () {
 /*********************************/
 /**      Handlebars setup       **/
 /*********************************/
-
 var hbs = exphbs.create({
   defaultLayout: 'main',
   helpers: {
-    ifeq: function (a, b, options) {
+    ifeq: function(a, b, options) {
       if (a === b) {
         return options.fn(this);
       }
       return options.inverse(this);
     },
-    toJSON: function (object) {
+    toJSON : function(object) {
       return JSON.stringify(object);
     }
   }
@@ -108,12 +79,11 @@ var hbs = exphbs.create({
 /*********************************/
 /**     EXPRESS CONFIGURATION   **/
 /*********************************/
-// https://blog.openshift.com/run-your-nodejs-projects-on-openshift-in-two-simple-steps/
 
 //Cross-Origin Middleware
 app.use(cors());
 // SeT Application Title
-app.set('title', 'Beatriks');
+app.set('title', 'Title');
 //Set Template Engine
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
@@ -148,7 +118,6 @@ app.use(function (req, res, next) {
 
 //Serve Static File
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 /*********************************/
 /**    HELMET CONFIGURATION    **/
@@ -195,6 +164,7 @@ app.use(helmet.contentSecurityPolicy({
 /*********************************/
 /**    Application Routes       **/
 /*********************************/
+
 app.get(    '/',                 HomeController.index);
 app.get(    '/contact',          contactController.contactGet);
 app.post(   '/contact',          contactController.contactPost);
@@ -216,79 +186,19 @@ app.get(    '/auth/facebook/callback', passport.authenticate('facebook', { succe
 app.get(    '/auth/google',            passport.authenticate('google', { scope: 'profile email' }));
 app.get(    '/auth/google/callback',   passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login' }));
 app.get(    '/upload',           uploadController.getFileUpload);
-app.post(   '/upload',           upload.single('File'), 
-async (req, res) => {
-  try {
-    const col = await loadCollection(COLLECTION_NAME, db);
-    const data = col.insert(req.file);
-    const userUpdate = { noteList: [{ fileId: data.filename, originalFileName: data.originalname }] };
+app.post(   '/upload',           uploadController.postFileUpload);
+//app.get(    '/list',             uploadController.getFileList);
 
-    user = await new Promise((resolve, reject) => {
-      User.findOneAndUpdate({ email: req.user.email }, userUpdate, { upsert: true, new: true }, (error, obj) => {
-        if (error) {
-          console.error(JSON.stringify(error));
-          return reject(error);
-        }
-        resolve(obj);
-      });
-    })
-      .then(() => {
-        db.saveDatabase(); //ancora non ho deciso che farci
-        res.render('account/uploaded', { user: req.user, id: data.$loki, fileName: data.filename, originalName: data.originalname });
-      });
-  } catch (err) {
-    req.flash('error', { msg: 'Server Problems -- Try Later' });
-    res.render("/");
-  }
-});
-
-
-// per qualcosa del tipo /appunti/:id
-/*
-const loadFile = async (req, res) => {
-  try {
-    const col = await loadCollection(COLLECTION_NAME, db);
-    const result = col.get(req.params.id);
-
-    if (!result) {
-      res.sendStatus(404);
-      return;
-    };
-
-    res.setHeader('Content-Type', result.mimetype);
-    fs.createReadStream(path.join(UPLOAD_PATH, result.filename)).pipe(res);
-  } catch (err) {
-    res.sendStatus(400);
-  }
-}
-*/
-/*
-app.get('/list All', async (req, res) => {
-    try {
-        const col = await loadCollection(COLLECTION_NAME, db);
-        res.send(col.data);
-    } catch (err) {
-        res.sendStatus(400);
-    }
-})
-
-*/
-
-
-
-//Defalut route
 app.all('*', (req, res) => {
-  res.status(404).sendFile(path.join(__dirname + '/public/404.html'));
+   res.status(404).sendFile(path.join(__dirname + '/public/404.html'));
 });
 
+// Error handler
 if (app.get('env') === 'production') {
-  
-} else { //devlopment
-
-  //Clear all files in /uploads
-  const clearFiles = function (folderPath) {
-    del.sync([`${folderPath}/**`, `!${folderPath}`]);
-  };
+  app.use(function(err, req, res, next) {
+    console.error(err.stack);
+    res.sendStatus(err.status || 500);
+  });
 }
 
 app.listen(app.get('port'), () => {
@@ -299,33 +209,3 @@ app.listen(app.get('port'), () => {
 
 
 module.exports = app;
-
-
-
-// modo figo di fare le cose:
-// http://blog.robertonodi.me/managing-files-with-node-js-and-mongodb-gridfs/
-
-/** Set Upload Folder **/
-//const upload = multer({ dest: path.join(__dirname, '/uploads') });
-
-/*
-function setHost() {
-  var host =
-    process.env.npm_config_host ||
-    process.env.OPENSHIFT_SLS_IP ||
-    process.env.OPENSHIFT_NODEJS_IP ||
-    process.env.HOST ||
-    process.env.VCAP_APP_HOST ||
-    instructions.config.host ||
-    process.env.npm_package_config_host ||
-    app.get('host');
-
-  if (host !== undefined) {
-    assert(typeof host === 'string', 'app.host must be a string');
-    app.set('host', host);
-  }
-}
-*/
-
-// res.sendFile(path.join(__dirname + '/index.html'));
-

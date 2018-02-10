@@ -4,9 +4,8 @@ var nodemailer = require('nodemailer');
 var passport = require('passport');
 var User = require('../models/User');
 
-/**
- * Login required middleware
- */
+
+/** Login  Middleware **/
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
     next();
@@ -15,9 +14,7 @@ exports.ensureAuthenticated = function(req, res, next) {
   }
 };
 
-/**
- * GET /login
- */
+/** GET To /login **/
 exports.loginGet = function(req, res) {
   if (req.user) {
     return res.redirect('/');
@@ -27,13 +24,11 @@ exports.loginGet = function(req, res) {
   });
 };
 
-/**
- * POST /login
- */
+/** POST To /login **/
 exports.loginPost = function(req, res, next) {
-  req.assert('email', 'Email non valida').isEmail();
-  req.assert('email', 'Email vuota').notEmpty();
-  req.assert('password', 'Password vuota').notEmpty();
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('email', 'Email cannot be blank').notEmpty();
+  req.assert('password', 'Password cannot be blank').notEmpty();
   req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
@@ -54,17 +49,13 @@ exports.loginPost = function(req, res, next) {
   })(req, res, next);
 };
 
-/**
- * GET /logout
- */
+/** GET /logout **/
 exports.logout = function(req, res) {
   req.logout();
   res.redirect('/');
 };
 
-/**
- * GET /signup
- */
+/** GET /signup **/
 exports.signupGet = function(req, res) {
   if (req.user) {
     return res.redirect('/');
@@ -74,14 +65,12 @@ exports.signupGet = function(req, res) {
   });
 };
 
-/**
- * POST /signup
- */
+/** POST To /signup **/
 exports.signupPost = function(req, res, next) {
-  req.assert('name', 'Name vuoto').notEmpty();
-  req.assert('email', 'Email non valida').isEmail();
-  req.assert('email', 'Email email vuota').notEmpty();
-  req.assert('password', 'Password password troppo corta (minimo 4 caratteri)').len(4);
+  req.assert('name', 'Name cannot be blank').notEmpty();
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('email', 'Email cannot be blank').notEmpty();
+  req.assert('password', 'Password must be at least 4 characters long').len(4);
   req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
@@ -93,7 +82,7 @@ exports.signupPost = function(req, res, next) {
 
   User.findOne({ email: req.body.email }, function(err, user) {
     if (user) {
-      req.flash('error', { msg: 'email già registrata' });
+      req.flash('error', { msg: 'The email address you have entered is already associated with another account.' });
       return res.redirect('/signup');
     }
     user = new User({
@@ -109,25 +98,21 @@ exports.signupPost = function(req, res, next) {
   });
 };
 
-/**
- * GET /account
- */
+/** GET To /account **/
 exports.accountGet = function(req, res) {
   res.render('account/profile', {
-    title: 'Account'
+    title: 'My Account'
   });
 };
 
-/**
- * PUT /account
- */
+/** Update OR change password. **/
 exports.accountPut = function(req, res, next) {
   if ('password' in req.body) {
-    req.assert('password', 'Password troppo corta').len(4);
-    req.assert('confirm', 'Passwords diversew').equals(req.body.password);
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+    req.assert('confirm', 'Passwords must match').equals(req.body.password);
   } else {
-    req.assert('email', 'Email non valida').isEmail();
-    req.assert('email', 'Email vuota').notEmpty();
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('email', 'Email cannot be blank').notEmpty();
     req.sanitize('email').normalizeEmail({ remove_dots: false });
   }
 
@@ -150,31 +135,27 @@ exports.accountPut = function(req, res, next) {
     }
     user.save(function(err) {
       if ('password' in req.body) {
-        req.flash('success', { msg: 'password cambiata' });
+        req.flash('success', { msg: 'Your password has been changed.' });
       } else if (err && err.code === 11000) {
-        req.flash('error', { msg: 'email già registrata.' });
+        req.flash('error', { msg: 'The email address you have entered is already associated with another account.' });
       } else {
-        req.flash('success', { msg: 'informazioni aggiornate.' });
+        req.flash('success', { msg: 'Your profile information has been updated.' });
       }
       res.redirect('/account');
     });
   });
 };
 
-/**
- * DELETE /account
- */
+/** DELETE To /account **/
 exports.accountDelete = function(req, res, next) {
   User.remove({ _id: req.user.id }, function(err) {
     req.logout();
-    req.flash('info', { msg: 'Account Eliminato.' });
+    req.flash('info', { msg: 'Your account has been permanently deleted.' });
     res.redirect('/');
   });
 };
 
-/**
- * GET /unlink/:provider
- */
+/** GET /unlink/:provider **/
 exports.unlink = function(req, res, next) {
   User.findById(req.user.id, function(err, user) {
     switch (req.params.provider) {
@@ -189,30 +170,26 @@ exports.unlink = function(req, res, next) {
         return res.redirect('/account');
     }
     user.save(function(err) {
-      req.flash('success', { msg: 'Account Scollegato' });
+      req.flash('success', { msg: 'Your account has been unlinked.' });
       res.redirect('/account');
     });
   });
 };
 
-/**
- * GET /forgot
- */
+/** GET /forgot **/
 exports.forgotGet = function(req, res) {
   if (req.isAuthenticated()) {
     return res.redirect('/');
   }
   res.render('account/forgot', {
-    title: 'Recupera Password'
+    title: 'Forgot Password'
   });
 };
 
-/**
- * POST /forgot
- */
+/** POST /forgot **/
 exports.forgotPost = function(req, res, next) {
-  req.assert('email', 'Email non valida').isEmail();
-  req.assert('email', 'Email vuota').notEmpty();
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('email', 'Email cannot be blank').notEmpty();
   req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
@@ -232,7 +209,7 @@ exports.forgotPost = function(req, res, next) {
     function(token, done) {
       User.findOne({ email: req.body.email }, function(err, user) {
         if (!user) {
-          req.flash('error', { msg: 'L\'indirizzo email  ' + req.body.email + ' non è registrato' });
+          req.flash('error', { msg: 'The email address ' + req.body.email + ' is not associated with any account.' });
           return res.redirect('/forgot');
         }
         user.passwordResetToken = token;
@@ -252,24 +229,21 @@ exports.forgotPost = function(req, res, next) {
       });
       var mailOptions = {
         to: user.email,
-        from: 'support@beatriks.com',
-        subject: '✔ Reset your password on Beatriks.com',
-        text: 'Hai ricevuto questa mail per via del sito Beatriks.....\n\n' +
-        'Clicca sul seguente link:\n\n' +
+        from: 'support@yourdomain.com',
+        subject: '✔ Reset your password on Beatriks',
+        text: 'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
         'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-        'Se non hai fatto questa richiesta ignora il messaggio.\n'
+        'It\'s not your request? No problem! You Password will be immutated.\n'
       };
       transporter.sendMail(mailOptions, function(err) {
-        req.flash('info', { msg: 'il link di recupero è stato inviato a ' + user.email + '. Controlla la mail.' });
+        req.flash('info', { msg: 'An email has been sent to ' + user.email + ' with further instructions.' });
         res.redirect('/forgot');
       });
     }
   ]);
 };
 
-/**
- * GET /reset
- */
+/** GET To /reset **/
 exports.resetGet = function(req, res) {
   if (req.isAuthenticated()) {
     return res.redirect('/');
@@ -278,7 +252,7 @@ exports.resetGet = function(req, res) {
     .where('passwordResetExpires').gt(Date.now())
     .exec(function(err, user) {
       if (!user) {
-        req.flash('error', { msg: 'Token non valido o sessione scaduta.' });
+        req.flash('error', { msg: 'Password reset token is invalid or has expired.' });
         return res.redirect('/forgot');
       }
       res.render('account/reset', {
@@ -287,12 +261,10 @@ exports.resetGet = function(req, res) {
     });
 };
 
-/**
- * POST /reset
- */
+/** POST /reset **/
 exports.resetPost = function(req, res, next) {
-  req.assert('password', 'Password troppo corta').len(4);
-  req.assert('confirm', 'Passwords diverse').equals(req.body.password);
+  req.assert('password', 'Password must be at least 4 characters long').len(4);
+  req.assert('confirm', 'Passwords must match').equals(req.body.password);
 
   var errors = req.validationErrors();
 
@@ -307,7 +279,7 @@ exports.resetPost = function(req, res, next) {
         .where('passwordResetExpires').gt(Date.now())
         .exec(function(err, user) {
           if (!user) {
-            req.flash('error', { msg: 'Token non valido o sessione scaduta.' });
+            req.flash('error', { msg: 'Password reset token is invalid or has expired.' });
             return res.redirect('back');
           }
           user.password = req.body.password;
@@ -331,16 +303,14 @@ exports.resetPost = function(req, res, next) {
       var mailOptions = {
         from: 'support@yourdomain.com',
         to: user.email,
-        subject: 'La password di Beatriks è stata cambiata',
-        text: 'Ciao,\n\n' +
-        'questa è la password di conferma per l\'account ' + user.email + '.\n'
+        subject: 'Your password has been changed',
+        text: 'Hello,\n\n' +
+        'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
       };
       transporter.sendMail(mailOptions, function(err) {
-        req.flash('success', { msg: 'Password cambiata con successo.' });
+        req.flash('success', { msg: 'Your password has been changed successfully.' });
         res.redirect('/account');
       });
     }
   ]);
 };
-
-

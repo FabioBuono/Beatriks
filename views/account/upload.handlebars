@@ -1,26 +1,39 @@
-<div class="container">
+<div class="login-container container">
   <div class="panel">
     <div class="panel-body">
-      {{#if messages.info}}
-      <div role="alert" class="alert alert-info">
-        {{#each messages.info}}
-        <div>{{msg}}</div>
-        {{/each}}
-      </div>
-      {{/if}} {{#if messages.error}}
+      {{#if messages.error}}
       <div role="alert" class="alert alert-danger">
         {{#each messages.error}}
         <div>{{msg}}</div>
         {{/each}}
       </div>
-      {{/if}} 
-      
-      {{#if user}}
-      <form role='form' , enctype='multipart/form-data' , method='POST'>
-        <div class="form-group">
-          <input type='file' , name='File'>
-          <button type='submit'>invia</button>
-        </div>
-      </form>
       {{/if}}
 
+  <link href="css/styles.css" rel="stylesheet">
+
+  
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h1>Beatriks</h1><br>
+            <h2>Multiple File Upload</h2>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar"></div>
+            </div>
+            <form action="/upload" method="post">
+            <button class="btn btn-lg upload-btn" type="button">Upload File</button>
+            <br>
+            <a href="/"><h2>Back To Home</h2></a>
+            </form>
+          </div>
+        </div>
+      </div>
+   
+
+  <input id="upload-input" type="file" name="uploads[]" multiple="multiple"></br>
+
+  <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="javascripts/upload.js"></script>
+      
+      

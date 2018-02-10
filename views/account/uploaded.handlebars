@@ -1,24 +1,43 @@
-<div class="container">
+<div class="login-container container">
   <div class="panel">
     <div class="panel-body">
-      {{#if messages.info}}
-      <div role="alert" class="alert alert-info">
-        {{#each messages.info}}
-        <div>{{msg}}</div>
-        {{/each}}
-      </div>
-      {{/if}} {{#if messages.error}}
+      {{#if messages.error}}
       <div role="alert" class="alert alert-danger">
         {{#each messages.error}}
         <div>{{msg}}</div>
         {{/each}}
       </div>
-      {{/if}} 
-      
+      {{/if}} {{#if status}}
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h1>Beatriks</h1>
+            <br>
+            <h2>Single File Upload</h2>
+            <br>
+            <br>
+            <hr>
+            <h2>File: {{status.file}} caricato</h2>
+            <br>
+            <a href="/">
+              <h2>Back To Home</h2>
+            </a>
+          </div>
+        </div>
+      </div>
 
- <div style="text-align:center">
- File con id: <h1>{{fileName}}</h1>caricato correttamente <br><br>
- utente: {{user.email}} <br>
- <h1>Nome Originale: {{originalName}} salvato in mongodb</h1>
- </div>
-     
+      {{else}}
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h1>Beatriks</h1>
+            <br>
+            <h2>Single File Upload</h2>
+            <form id="uploadForm" enctype="multipart/form-data" method="post">
+              <input type="file" name="File" />
+              <input type="submit" value="Upload File" name="submit">
+            </form>
+          </div>
+        </div>
+      </div>
+      {{/if}}

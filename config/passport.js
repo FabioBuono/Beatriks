@@ -20,19 +20,19 @@ passport.deserializeUser(function(id, done) {
 passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
   User.findOne({ email: email }, function(err, user) {
     if (!user) {
-      return done(null, false, { msg: 'La mail ' + email + ' non è associata a nessun account. ' +
-      'controlla la mail è prova ancora.' });
+      return done(null, false, { msg: 'The email address ' + email + ' is not associated with any account. ' +
+      'Double-check your email address and try again.' });
     }
     user.comparePassword(password, function(err, isMatch) {
       if (!isMatch) {
-        return done(null, false, { msg: 'Mail o password errati' });
+        return done(null, false, { msg: 'Invalid email or password' });
       }
       return done(null, user);
     });
   });
 }));
 
-//Facebook Strategy
+// Sign in with Facebook
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_ID,
   clientSecret: process.env.FACEBOOK_SECRET,
@@ -43,7 +43,7 @@ passport.use(new FacebookStrategy({
   if (req.user) {
     User.findOne({ facebook: profile.id }, function(err, user) {
       if (user) {
-        req.flash('error', { msg: 'Esiste già un utente registrato con questo account Facebook.' });
+        req.flash('error', { msg: 'There is already an existing account linked with this Facebook account.' });
         done(err);
       } else {
         User.findById(req.user.id, function(err, user) {
@@ -52,7 +52,7 @@ passport.use(new FacebookStrategy({
           user.picture = user.picture || 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
           user.facebook = profile.id;
           user.save(function(err) {
-            req.flash('success', { msg: 'Account Facebook linkato.' });
+            req.flash('success', { msg: 'Your Facebook account has been linked.' });
             done(err, user);
           });
         });
@@ -65,7 +65,7 @@ passport.use(new FacebookStrategy({
       }
       User.findOne({ email: profile._json.email }, function(err, user) {
         if (user) {
-          req.flash('errore! Utente ', { msg: user.email + ' già registrato.' });
+          req.flash('error', { msg: user.email + ' is already associated with another account.' });
           done(err);
         } else {
           var newUser = new User({
@@ -85,7 +85,7 @@ passport.use(new FacebookStrategy({
   }
 }));
 
-// Google
+// Sign in with Google
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_ID,
   clientSecret: process.env.GOOGLE_SECRET,
@@ -95,7 +95,7 @@ passport.use(new GoogleStrategy({
   if (req.user) {
     User.findOne({ google: profile.id }, function(err, user) {
       if (user) {
-        req.flash('error', { msg: 'Account google già usato.' });
+        req.flash('error', { msg: 'There is already an existing account linked with this Google account.' });
       } else {
         User.findById(req.user.id, function(err, user) {
           user.name = user.name || profile.displayName;
@@ -103,7 +103,7 @@ passport.use(new GoogleStrategy({
           user.picture = user.picture || profile._json.image.url;
           user.google = profile.id;
           user.save(function(err) {
-            req.flash('success', { msg: 'Account Google linkato.' });
+            req.flash('success', { msg: 'Your Google account has been linked.' });
             done(err, user);
           });
         });
@@ -116,7 +116,7 @@ passport.use(new GoogleStrategy({
       }
       User.findOne({ email: profile.emails[0].value }, function(err, user) {
         if (user) {
-          req.flash('errore! Utente ', { msg: user.email + ' già registrato.' });
+          req.flash('error', { msg: user.email + ' is already associated with another account.' });
           done(err);
         } else {
           var newUser = new User({

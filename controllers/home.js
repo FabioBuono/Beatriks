@@ -1,10 +1,10 @@
-/**
- * GET /
- */
-exports.index = function(req, res) {
- if (req.isAuthenticated()){
+/**  GET To "/"  **/
+exports.index = (req, res) => {
+  let usr = undefined;
+  if (req.isAuthenticated()) {
+     usr = req.user;
+  }
   res.render('home', {
-               user: req.user
-            }) } else {
-        res.render('home', { new: true})}
+    user: usr
+  });
 };

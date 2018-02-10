@@ -8,11 +8,10 @@
           {{/each}}
         </div>
       {{/if}}
-
       <form method="POST">
-        <legend>Crea un Account</legend>
+        <legend>Create an account</legend>
         <div class="form-group">
-          <label for="name">Nome</label>
+          <label for="name">Name</label>
           <input type="text" name="name" id="name" placeholder="Name" class="form-control" autofocus>
         </div>
         <div class="form-group">
@@ -24,18 +23,18 @@
           <input type="password" name="password" id="password" placeholder="Password" class="form-control">
         </div>
         <div class="form-group">
-          <small class="text-muted">Cliccando su prosegui dichiari di accettare i <a href="/">Termini di servizio</a>.</small>
+          <small class="text-muted">By signing up, you agree to the <a href="/">Terms of Service</a>.</small>
         </div>
-        <button type="submit" class="btn btn-success">prosegui</button>
+        <button type="submit" class="btn btn-success">Create an account</button>
       </form>
-      <div class="hr-title"><span>oppure</span></div>
+      <div class="hr-title"><span>or</span></div>
       <div class="btn-toolbar text-center">
-        <a href="/auth/facebook" class="btn btn-facebook">Loggati con Facebook</a>
-        <a href="/auth/google" class="btn btn-google">Loggati con Google</a>
+        <a href="/auth/facebook" class="btn btn-facebook">Sign in with Facebook</a>
+        <a href="/auth/google" class="btn btn-google">Sign in with Google</a>
       </div>
     </div>
   </div>
   <p class="text-center">
-    Sei già registrato? <a href="/login"><strong>Log in</strong></a>
+    Already have an account? <a href="/login"><strong>Log in</strong></a>
   </p>
 </div>

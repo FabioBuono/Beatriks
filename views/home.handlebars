@@ -1,61 +1,60 @@
 <div class="container-fluid">
   {{#if messages.success}}
-    <div role="alert" class="alert alert-success">
-      {{#each messages.success}}
-        <div>{{msg}}</div>
-      {{/each}}
-    </div>
-  {{/if}}
-  {{#if messages.error}}
-    <div role="alert" class="alert alert-danger">
-      {{#each messages.error}}
-        <div>{{msg}}</div>
-      {{/each}}
-    </div>
-  {{/if}}
-  {{#if messages.info}}
-    <div role="alert" class="alert alert-info">
-      {{#each messages.info}}
-        <div>{{msg}}</div>
-      {{/each}}
-    </div>
-  {{/if}}
-
-  <div class="row">
-    <div class="col-sm-1 col-md-1 text-center">
-        <h1>Beatriks</h1>
-      </div>    
+  <div role="alert" class="alert alert-success">
+    {{#each messages.success}}
+    <div>{{msg}}</div>
+    {{/each}}
   </div>
-
-
-<div class="col-sm-5 col-sm-push-3"></div>
-<div class="login-container container">
-  <div class="panel">
-    <div class="panel-body">
-      {{#if messages.error}}
-        <div role="alert" class="alert alert-danger">
-          {{#each messages.error}}
-            <div>{{msg}}</div>
-          {{/each}}
-        </div>
-      {{/if}}
-
-
-
-{{#if user}}
-      <h1>Benvenuto</h1>
-      <h3>{{user.name}}</h3>
+  {{/if}} {{#if messages.error}}
+  <div role="alert" class="alert alert-danger">
+    {{#each messages.error}}
+    <div>{{msg}}</div>
+    {{/each}}
+  </div>
+  {{/if}} {{#if messages.info}}
+  <div role="alert" class="alert alert-info">
+    {{#each messages.info}}
+    <div>{{msg}}</div>
+    {{/each}}
+  </div>
+  {{/if}} {{#if user}}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="jumbotron text-center">
+        <h1 class="display-3">Hello, <strong>{{user.name}}</strong></h1>
+        <br><hr>
         <ul>
-          <li><a href="/account">Il mio Profilo</a></li>
-          <li><a href="/upload">Carica Appunti</a></li>
-          <li><a href="/logout">Logout</a></li>
+          <li>
+            <a href="/account"><h2>My Account</h2></a>
+          </li>
+          <li>
+            <a href="/logout"><h2>Logout</h2></a><hr>
+          </li>
+          <li>
+            <a href="/upload"><h2>Multiple Files Upload</h2></a>
+          </li>
+          <li>
+            <a href="/uploadOne"><h2>Single File Upload (work in progress)</h2></a>
+          </li>
+          <li>
+            <a href="/list"><h2>File Uploaded (work in progress)</h2></a>
+          </li>
         </ul>
-{{/if}}
-
-{{#if new}}
-    <a href="/signup"><h1>>Registrati</h1></a>
-
-{{/if}}
-
-
-</div> <!-- row -->
+      </div>
+    </div>
+  </div>
+  {{else}}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="jumbotron text-center">
+        <h1 class="display-3">Hello, world!</h1>
+        <p class="lead">this is a text for home page</p>
+        <hr class="my-4">
+        <p>Find out the template!</p>
+        <p class="lead">
+          <a class="btn btn-primary btn-lg" href="/signup" role="button">Register!</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  {{/if}}

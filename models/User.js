@@ -8,38 +8,23 @@ var schemaOptions = {
     virtuals: true
   }
 };
-/*
-https://groups.google.com/forum/?fromgroups#!topic/mongoose-orm/HjrPAP_WXYs
-*/
-const userSchema = new mongoose.Schema({  //var o let o const??? 
+
+var userSchema = new mongoose.Schema({
   name: String,
-  surname :String,
   email: { type: String, unique: true},
   password: String,
   passwordResetToken: String,
   passwordResetExpires: Date,
   gender: String,
   location: String,
-  university: Number, //id of university da tabella ad hoc
   website: String,
   picture: String,
   facebook: String,
   google: String,
-  noteList : [{ 
-    title: String, 
-    originalFileName: String,
-    description: String, 
-    fileId: String, 
-    date: Date, 
-    refToComment: String, //sostituire con array di riferimenti a commenti
-    private: Boolean,
-    teacherName: String,
-    topicName: String,
-    university: Number,
-    refToLikeID: Number //sostituire con array di id utente che hanno messo like
-  }],
-  buddyList : [ { id: String } ]
-},schemaOptions);
+  fileName: String,
+  OriginalFileName: String
+
+}, schemaOptions);
 
 userSchema.pre('save', function(next) {
   var user = this;
