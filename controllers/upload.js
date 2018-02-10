@@ -1,9 +1,9 @@
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
-const multer = require('multer');
-var filen;
 
+
+// Multiple Files Upload Get 
 exports.getFileUpload = (req, res) => {
   if (req.isAuthenticated()) {
     res.render('account/upload', {
@@ -13,7 +13,7 @@ exports.getFileUpload = (req, res) => {
 };
 
 
-
+// Multiple Files Upload Post 
 exports.postFileUpload = async (req, res) => {
   // create an incoming form object
   var form = new formidable.IncomingForm();
@@ -38,6 +38,7 @@ exports.postFileUpload = async (req, res) => {
   form.parse(req);
 };
 
+// Single Files Upload Get 
 exports.getFileUploadOne = (req, res) => {
   if (req.isAuthenticated()) {
     res.render('account/uploaded', {
@@ -46,6 +47,7 @@ exports.getFileUploadOne = (req, res) => {
  } else res.redirect('/');
 };
 
+// Single Files Upload Post 
 exports.postFileUploadOne = (req, res) => {
 // create an incoming form object
 var form = new formidable.IncomingForm();
