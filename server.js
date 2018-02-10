@@ -1,23 +1,21 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var compression = require('compression');
-var methodOverride = require('method-override');
-var session = require('express-session');
-var flash = require('express-flash');
-var bodyParser = require('body-parser');
+var express          = require('express');
+var path             = require('path');
+var logger           = require('morgan');
+var compression      = require('compression');
+var methodOverride   = require('method-override');
+var session          = require('express-session');
+var flash            = require('express-flash');
+var bodyParser       = require('body-parser');
 var expressValidator = require('express-validator');
-var dotenv = require('dotenv');
-var exphbs = require('express-handlebars');
-var mongoose = require('mongoose');
-var passport = require('passport');
-const cors = require('cors');
-const fs = require('fs');
-const chalk = require('chalk');
-const os = require('os');
-const helmet = require('helmet');
-
-
+var dotenv           = require('dotenv');
+var exphbs           = require('express-handlebars');
+var mongoose         = require('mongoose');
+var passport         = require('passport');
+const cors           = require('cors');
+const fs             = require('fs');
+const chalk          = require('chalk');
+const os             = require('os');
+const helmet         = require('helmet');
 /************************************/
 /**       Basic Configuration     **/
 /************************************/
@@ -25,26 +23,19 @@ const log  = console.log;
 const info = chalk.bold.yellow;
 const ok   = chalk.green('✓');
 const ex   = chalk.red('✗');
-
-
-// Load environment variables from .env file
+// Load configuration from .env file
 dotenv.load();
-
 // Controllers
 var HomeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
 var uploadController = require('./controllers/upload');
-
-
 // Passport OAuth strategies
 require('./config/passport');
 var app = express();
-
 /*********************************/
 /**  Mongoose CONFIGURATION     **/
 /*********************************/
-
 //set global promises for mongo
 mongoose.Promise = global.Promise;
 //connection to mongo db
@@ -56,8 +47,6 @@ mongoose.connection.on('error', function () {
   log('%s MongoDB: connection error - Check for service running.', ex);
   process.exit(1);
 });
-
-
 /*********************************/
 /**      Handlebars setup       **/
 /*********************************/
@@ -75,11 +64,9 @@ var hbs = exphbs.create({
     }
   }
 });
-
 /*********************************/
 /**     EXPRESS CONFIGURATION   **/
 /*********************************/
-
 //Cross-Origin Middleware
 app.use(cors());
 // SeT Application Title
@@ -109,16 +96,13 @@ app.use(flash());
 //login helper middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
 // Set Local variable 
 app.use(function (req, res, next) {
   res.locals.user = req.user;
   next();
 });
-
 //Serve Static File
 app.use(express.static(path.join(__dirname, 'public')));
-
 /*********************************/
 /**    HELMET CONFIGURATION    **/
 /*********************************/
@@ -147,8 +131,6 @@ app.use(helmet({
     action: 'deny'
   }
 }));
-
-
 /*
 // Content Security Policy Per Risorse Esterne
 app.use(helmet.contentSecurityPolicy({
@@ -158,13 +140,9 @@ app.use(helmet.contentSecurityPolicy({
   }
 }))
 */
-
-
-
 /*********************************/
 /**    Application Routes       **/
 /*********************************/
-
 app.get(    '/',                 HomeController.index);
 app.get(    '/contact',          contactController.contactGet);
 app.post(   '/contact',          contactController.contactPost);
@@ -188,7 +166,6 @@ app.get(    '/auth/google/callback',   passport.authenticate('google', { success
 app.get(    '/upload',           uploadController.getFileUpload);
 app.post(   '/upload',           uploadController.postFileUpload);
 //app.get(    '/list',             uploadController.getFileList);
-
 app.all('*', (req, res) => {
    res.status(404).sendFile(path.join(__dirname + '/public/404.html'));
 });
@@ -206,6 +183,4 @@ app.listen(app.get('port'), () => {
   log("-- %s User: %s on platform: %s",           ok, os.userInfo().username, os.platform().toString());
   log('-- %s Press %s to stop\n',                 ok, info('CTRL-C'));
 });
-
-
 module.exports = app;
