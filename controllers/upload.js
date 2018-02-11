@@ -31,6 +31,39 @@ exports.postFileUploadOne = (req, res) => {
 }
 
 
+/*
+ TEST UNIQUE FUNCTION:
+ 
+ exports.uploadFile = (req, res) => {
+  let mtd = req.method;
+  let url = req.url;
+  if (isAuthenticated) {
+    switch (mtd) {
+      case "POST":{
+        await helper.upHelper(req, res, (url == "/upload") ? true : false);
+      }
+        break;
+      case "GET":
+        if (url == "/upload") {
+          res.render('account/upload', {
+            user: req.user
+          })
+        } else {
+          res.render('account/uploaded', {
+            user: req.user
+          })
+        }
+        break;
+      default:
+        /* TO DO ERROR */
+        break;
+    } // switch
+  } //Is not authenticated !!
+}
+*/
+
+
+
 
 
 
