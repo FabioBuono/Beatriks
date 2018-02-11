@@ -21,23 +21,20 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="jumbotron text-center">
-        <h1 class="display-3">Hello, <strong>{{user.name}}</strong></h1>
+        <h1 class="display-3"><%= __('Hello, ')%>, <strong>{{user.name}}</strong></h1>
         <br><hr>
         <ul>
           <li>
-            <a href="/account"><h2>My Account</h2></a>
+            <a href="/account"><h2><%= __('My Account')%></h2></a>
           </li>
           <li>
             <a href="/logout"><h2>Logout</h2></a><hr>
           </li>
           <li>
-            <a href="/upload"><h2>Multiple Files Upload</h2></a>
+            <a href="/upload"><h2><%= __('Multiple File Upload')%></h2></a>
           </li>
           <li>
-            <a href="/uploaded"><h2>Single File Upload (work in progress)</h2></a>
-          </li>
-          <li>
-            <a href="/list"><h2>File Uploaded (work in progress)</h2></a>
+            <a href="/uploaded"><h2><%= __('Single File Upload')%></h2></a>
           </li>
         </ul>
       </div>
@@ -48,11 +45,11 @@
     <div class="col-sm-12">
       <div class="jumbotron text-center">
         <h1 class="display-3">Hello, world!</h1>
-        <p class="lead">this is a text for home page</p>
+        <p class="lead"><%= __('this is a text for home page')%></p>
         <hr class="my-4">
-        <p>Find out the template!</p>
+        <p><%= __('Find Out The Template!')%></p>
         <p class="lead">
-          <a class="btn btn-primary btn-lg" href="/signup" role="button">Register!</a>
+          <a class="btn btn-primary btn-lg" href="/signup" role="button"><%= __('Register!')%></a>
         </p>
       </div>
     </div>
