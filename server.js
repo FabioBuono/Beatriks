@@ -16,6 +16,7 @@ const fs             = require('fs');
 const chalk          = require('chalk');
 const os             = require('os');
 const helmet         = require('helmet');
+var i18n             = require('./i18n');
 /************************************/
 /**       Basic Configuration     **/
 /************************************/
@@ -75,6 +76,8 @@ app.set('title', 'Title');
 //Set Template Engine
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
+//Set i18n Middleware
+app.use(i18n);
 // JSON Spaces setting
 app.set('json spaces', 2);
 //Set Host and Port
