@@ -32,7 +32,6 @@ var contactController = require('./controllers/contact');
 var uploadController = require('./controllers/upload');
 // Express
 var app = express();
-
 // Passport OAuth strategies
 require('./config/passport');
 /*********************************/
@@ -76,11 +75,13 @@ app.set('title', 'Title');
 //Set Template Engine
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
+// JSON Spaces setting
+app.set('json spaces', 2);
 //Set Host and Port
 app.set('host', os.hostname());
 app.set('port', process.env.PORT || 3000);
-//Disable Server Information
-app.disable('x-powered-by');
+//Disable Server Information (Disabled: We use Helmet)
+//app.disable('x-powered-by'); 
 //Use compressed header
 app.use(compression());
 //Set a logger
@@ -90,7 +91,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 //Express Validator Middleware
 app.use(expressValidator());
-//Override HTTP verbs where are not availe
+//Override HTTP verbs where are not avaible
 app.use(methodOverride('_method'));
 //Set up a session for Flash message and passport
 app.use(session({ secret: process.env.SESSION_SECRET, resave: true, saveUninitialized: true }));
@@ -103,8 +104,26 @@ app.use(function (req, res, next) {
   res.locals.user = req.user;
   next();
 });
+//Set Etag - By default, Express.js uses “weak” ETag. 
+app.set('etag', 'strong');
+/* 
+1. true: weak ETag, e.g., app.enable('etag'); that produces a response with ETag
+2. false: no ETag at all (IMHO not recommended), e.g., app.disable('etag'); that 
+  produces a response without ETag
+3. weak: weak ETag, e.g., app.set('etag', 'weak');
+4. strong: strong ETag, e.g., app.set('etag', 'strong');
+
+An identical strong ETag guarantees the response is byte-for-byte the same, 
+while an identical weak ETag indicates that the response is semantically the same.
+app.disable('etag');  
+*/
+
+/*********************************/
+/**  Staic Files Configuration  **/
+/*********************************/
 //Serve Static File
 app.use(express.static(path.join(__dirname, 'public')));
+
 /*********************************/
 /**    HELMET CONFIGURATION    **/
 /*********************************/
@@ -124,13 +143,12 @@ app.use(helmet.ieNoOpen());
 // Sets "X-DNS-Prefetch-Control: on".
 app.use(helmet.dnsPrefetchControl());
 // Hide Server Information and set a Fake data
-app.use(helmet.hidePoweredBy());
+//app.use(helmet.hidePoweredBy());
 app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }));
 //FrameGuard SameOrigin - Deny Frame
-app.use(helmet.frameguard({ action: 'sameorigin' }));
 app.use(helmet({
   frameguard: {
-    action: 'deny'
+    action: 'deny'  //Optional: 'sameorigin'
   }
 })); 
 /*
@@ -168,8 +186,8 @@ app.get(    '/auth/google',            passport.authenticate('google', { scope: 
 app.get(    '/auth/google/callback',   passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login' }));
 app.get(    '/upload',           uploadController.getFileUpload);
 app.post(   '/upload',           uploadController.postFileUpload);
-app.get(    '/uploaded',           uploadController.getFileUploadOne);
-app.post(   '/uploaded',           uploadController.postFileUploadOne);
+app.get(    '/uploaded',         uploadController.getFileUploadOne);
+app.post(   '/uploaded',         uploadController.postFileUploadOne);
 
 app.all('*', (req, res) => {
    res.status(404).sendFile(path.join(__dirname + '/public/404.html'));
