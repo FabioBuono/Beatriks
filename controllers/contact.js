@@ -10,16 +10,16 @@ var transporter = nodemailer.createTransport({
 /** GET To /contact **/
 exports.contactGet = function(req, res) {
   res.render('contact', {
-    title: 'Contact'
+    title: '<%= __('Hello, ')%>Contact'
   });
 };
 
 /** POST /contact **/
 exports.contactPost = function(req, res) {
-  req.assert('name', 'Name cannot be blank').notEmpty();
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('email', 'Email cannot be blank').notEmpty();
-  req.assert('message', 'Message cannot be blank').notEmpty();
+  req.assert('name', '<%= __('Name cannot be blank')%>').notEmpty();
+  req.assert('email', '<%= __('Email is not valid')%>').isEmail();
+  req.assert('email', '<%= __('Email cannot be blank')%>').notEmpty();
+  req.assert('message', '<%= __('Message cannot be blank')%>').notEmpty();
   req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
@@ -32,12 +32,12 @@ exports.contactPost = function(req, res) {
   var mailOptions = {
     from: req.body.name + ' ' + '<'+ req.body.email + '>',
     to: 'your@email.com',
-    subject: '✔ Contact Form | Beatriks.Com',
+    subject: '✔ <%= __('Contact Form')%> | Beatriks.Com',
     text: req.body.message
   };
 
   transporter.sendMail(mailOptions, function(err) {
-    req.flash('success', { msg: 'Thank you! Your feedback has been submitted.' });
+    req.flash('success', { msg: '<%= __('Thank you! Your feedback has been submitted')%>.' });
     res.redirect('/contact');
   });
 };
