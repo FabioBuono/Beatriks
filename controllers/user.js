@@ -26,9 +26,9 @@ exports.loginGet = function(req, res) {
 
 /** POST To /login **/
 exports.loginPost = function(req, res, next) {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('email', 'Email cannot be blank').notEmpty();
-  req.assert('password', 'Password cannot be blank').notEmpty();
+  req.assert('email', '<%= __('Email is not valid')%>').isEmail();
+  req.assert('email', '<%= __('Email cannot be blank')%>').notEmpty();
+  req.assert('password', '<%= __('Password cannot be blank')%>').notEmpty();
   req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
@@ -67,10 +67,10 @@ exports.signupGet = function(req, res) {
 
 /** POST To /signup **/
 exports.signupPost = function(req, res, next) {
-  req.assert('name', 'Name cannot be blank').notEmpty();
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('email', 'Email cannot be blank').notEmpty();
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
+  req.assert('name', '<%= __('Name cannot be blank')%>').notEmpty();
+  req.assert('email', '<%= __('Email is not valid')%>').isEmail();
+  req.assert('email', '<%= __('Email cannot be blank')%>').notEmpty();
+  req.assert('password', '<%= __('Password must be at least 4 characters long')%>').len(4);
   req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
@@ -82,7 +82,7 @@ exports.signupPost = function(req, res, next) {
 
   User.findOne({ email: req.body.email }, function(err, user) {
     if (user) {
-      req.flash('error', { msg: 'The email address you have entered is already associated with another account.' });
+      req.flash('error', { msg: '<%= __('The email address you have entered is already associated with another account')%>.' });
       return res.redirect('/signup');
     }
     user = new User({
@@ -101,18 +101,18 @@ exports.signupPost = function(req, res, next) {
 /** GET To /account **/
 exports.accountGet = function(req, res) {
   res.render('account/profile', {
-    title: 'My Account'
+    title: '<%= __('Hello, ')%>My Account'
   });
 };
 
 /** Update OR change password. **/
 exports.accountPut = function(req, res, next) {
   if ('password' in req.body) {
-    req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirm', 'Passwords must match').equals(req.body.password);
+    req.assert('password', '<%= __('Password must be at least 4 characters long')%>').len(4);
+    req.assert('confirm', '<%= __('Passwords must match')%>').equals(req.body.password);
   } else {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('email', 'Email cannot be blank').notEmpty();
+    req.assert('email', '<%= __('Email is not valid')%>').isEmail();
+    req.assert('email', '<%= __('Email cannot be blank')%>').notEmpty();
     req.sanitize('email').normalizeEmail({ remove_dots: false });
   }
 
@@ -135,11 +135,11 @@ exports.accountPut = function(req, res, next) {
     }
     user.save(function(err) {
       if ('password' in req.body) {
-        req.flash('success', { msg: 'Your password has been changed.' });
+        req.flash('success', { msg: '<%= __('Your password has been changed')%>.' });
       } else if (err && err.code === 11000) {
-        req.flash('error', { msg: 'The email address you have entered is already associated with another account.' });
+        req.flash('error', { msg: '<%= __('The email address you have entered is already associated with another account')%>.' });
       } else {
-        req.flash('success', { msg: 'Your profile information has been updated.' });
+        req.flash('success', { msg: '<%= __('Your profile information has been updated')%>.' });
       }
       res.redirect('/account');
     });
@@ -150,7 +150,7 @@ exports.accountPut = function(req, res, next) {
 exports.accountDelete = function(req, res, next) {
   User.remove({ _id: req.user.id }, function(err) {
     req.logout();
-    req.flash('info', { msg: 'Your account has been permanently deleted.' });
+    req.flash('info', { msg: '<%= __('Your account has been permanently deleted')%>.' });
     res.redirect('/');
   });
 };
@@ -166,11 +166,11 @@ exports.unlink = function(req, res, next) {
         user.google = undefined;
         break;
       default:
-        req.flash('error', { msg: 'Invalid OAuth Provider' });
+        req.flash('error', { msg: '<%= __('Invalid OAuth Provider')%>' });
         return res.redirect('/account');
     }
     user.save(function(err) {
-      req.flash('success', { msg: 'Your account has been unlinked.' });
+      req.flash('success', { msg: '<%= __('Your account has been unlinked')%>.' });
       res.redirect('/account');
     });
   });
@@ -188,8 +188,8 @@ exports.forgotGet = function(req, res) {
 
 /** POST /forgot **/
 exports.forgotPost = function(req, res, next) {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('email', 'Email cannot be blank').notEmpty();
+  req.assert('email', '<%= __('Email is not valid')%>').isEmail();
+  req.assert('email', '<%= __('Email cannot be blank')%>').notEmpty();
   req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
@@ -209,7 +209,7 @@ exports.forgotPost = function(req, res, next) {
     function(token, done) {
       User.findOne({ email: req.body.email }, function(err, user) {
         if (!user) {
-          req.flash('error', { msg: 'The email address ' + req.body.email + ' is not associated with any account.' });
+          req.flash('error', { msg: '<%= __('The email address')%> ' + req.body.email + ' <%= __('is not associated with any account')%>.' });
           return res.redirect('/forgot');
         }
         user.passwordResetToken = token;
@@ -230,13 +230,13 @@ exports.forgotPost = function(req, res, next) {
       var mailOptions = {
         to: user.email,
         from: 'support@yourdomain.com',
-        subject: '✔ Reset your password on Beatriks',
-        text: 'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+        subject: '✔ <%= __('Reset your password on Beatriks')%>',
+        text: '<%= __('Please click on the following link, or paste this into your browser to complete the process:')%>\n\n' +
         'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-        'It\'s not your request? No problem! You Password will be immutated.\n'
+        '<%= __('It\'s not your request? No problem! You Password will be immutated')%>.\n'
       };
       transporter.sendMail(mailOptions, function(err) {
-        req.flash('info', { msg: 'An email has been sent to ' + user.email + ' with further instructions.' });
+        req.flash('info', { msg: '<%= __('An email has been sent to')%> ' + user.email + ' <%= __('with further instructions')%>.' });
         res.redirect('/forgot');
       });
     }
@@ -252,7 +252,7 @@ exports.resetGet = function(req, res) {
     .where('passwordResetExpires').gt(Date.now())
     .exec(function(err, user) {
       if (!user) {
-        req.flash('error', { msg: 'Password reset token is invalid or has expired.' });
+        req.flash('error', { msg: '<%= __('Password reset token is invalid or has expired')%>.' });
         return res.redirect('/forgot');
       }
       res.render('account/reset', {
@@ -263,8 +263,8 @@ exports.resetGet = function(req, res) {
 
 /** POST /reset **/
 exports.resetPost = function(req, res, next) {
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
-  req.assert('confirm', 'Passwords must match').equals(req.body.password);
+  req.assert('password', '<%= __('Password must be at least 4 characters long')%>').len(4);
+  req.assert('confirm', '<%= __('Passwords must match')%>').equals(req.body.password);
 
   var errors = req.validationErrors();
 
@@ -279,7 +279,7 @@ exports.resetPost = function(req, res, next) {
         .where('passwordResetExpires').gt(Date.now())
         .exec(function(err, user) {
           if (!user) {
-            req.flash('error', { msg: 'Password reset token is invalid or has expired.' });
+            req.flash('error', { msg: '<%= __('Password reset token is invalid or has expired')%>.' });
             return res.redirect('back');
           }
           user.password = req.body.password;
@@ -303,12 +303,12 @@ exports.resetPost = function(req, res, next) {
       var mailOptions = {
         from: 'support@yourdomain.com',
         to: user.email,
-        subject: 'Your password has been changed',
-        text: 'Hello,\n\n' +
-        'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+        subject: '<%= __('Your password has been changed')%>',
+        text: '<%= __('Hello, ')%>\n\n' +
+        '<%= __('This is a confirmation that the password for your account')%> ' + user.email + ' <%= __('has just been changed')%>.\n'
       };
       transporter.sendMail(mailOptions, function(err) {
-        req.flash('success', { msg: 'Your password has been changed successfully.' });
+        req.flash('success', { msg: '<%= __('Your password has been changed successfully')%>.' });
         res.redirect('/account');
       });
     }
