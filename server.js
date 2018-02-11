@@ -145,7 +145,7 @@ app.use(helmet.dnsPrefetchControl());
 // Hide Server Information and set a Fake data
 //app.use(helmet.hidePoweredBy());
 app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }));
-//FrameGuard SameOrigin - Deny Frame
+//FrameGuard - Deny Frame
 app.use(helmet({
   frameguard: {
     action: 'deny'  //Optional: 'sameorigin'
