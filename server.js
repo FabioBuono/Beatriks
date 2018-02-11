@@ -152,7 +152,7 @@ app.use(helmet({
   }
 })); 
 /*
-// Content Security Policy Per Risorse Esterne
+// Content Security Policy
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: 
