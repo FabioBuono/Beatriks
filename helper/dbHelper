@@ -1,0 +1,76 @@
+/*********************************************/
+/**      User Schema Helper Function        **/
+/*********************************************/
+
+const newUser = new User({
+	
+});
+
+
+newUser.save((err, user)=>{
+	if (err) {
+		console.log('errore');
+	}
+	console.log(user);
+});
+
+newUser.find({........}, (err, users)=>{
+	if (err){
+ 		console.log('errore');
+	}
+	console.log(users);
+
+});
+
+newUser.findOne({..........}, (err, user)=>{
+	if (err){
+ 		console.log('errore');
+	}
+	console.log(user);
+});
+
+
+newUser.findbyId('id..........', (err, user)=>{
+	if (err){
+ 		console.log('errore');
+	}
+	console.log(user);
+});
+
+
+newUser.findOneAndRemove({........}, (err, user)=>{
+	if (err){
+ 		console.log('errore');
+	}
+	console.log(user);
+});
+
+
+
+newUser.findByIdAndRemove('id.....', (err, user)=>{
+	if (err){
+ 		console.log('errore');
+	}
+	console.log(user);
+});
+
+
+
+newUser.findOneAndUpdate(({.....}),{$set:{.....}},
+(err, user)=>{
+	if (err) {
+		console.log(err);
+	} 
+	console.log(user)
+})
+
+
+newUser.findByID('id...', (err, user)=> {
+	if (err) console.log(err);
+  
+	newUser.set({.....});
+	newUser.save((err, user) => {
+		if (err) console.log(err);
+		console.log(user);
+	});
+});
