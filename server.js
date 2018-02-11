@@ -16,7 +16,7 @@ const fs             = require('fs');
 const chalk          = require('chalk');
 const os             = require('os');
 const helmet         = require('helmet');
-var i18n             = require('./i18n');
+const i18n           = require('i18n');
 /************************************/
 /**       Basic Configuration     **/
 /************************************/
