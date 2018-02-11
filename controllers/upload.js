@@ -1,7 +1,7 @@
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
-const helper = require('../config/uploadHelper');
+const helper = require('../helper/uploadHelper');
 
 // Multiple Files Upload Get 
 exports.getFileUpload = (req, res) => {
