@@ -13,14 +13,14 @@
           <div class="panel-body">
             <h1>Beatriks</h1>
             <br>
-            <h2>Single File Upload</h2>
+            <h2><%= __('Single File Upload')%></h2>
             <br>
             <br>
             <hr>
-            <h2>File: {{status.file}} caricato</h2>
+            <h2>File: {{status.file}} <%= __('uploaded')%></h2>
             <br>
             <a href="/">
-              <h2>Back To Home</h2>
+              <h2><%= __('Back To Home')%></h2>
             </a>
           </div>
         </div>
@@ -32,7 +32,7 @@
           <div class="panel-body">
             <h1>Beatriks</h1>
             <br>
-            <h2>Single File Upload</h2>
+            <h2><%= __('Single File Upload')%></h2>
             <form action="/uploaded" enctype="multipart/form-data" method="post">
               <input type="file" name="upload" multiple>
               <input type="submit" value="Upload">
