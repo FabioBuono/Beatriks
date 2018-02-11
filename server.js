@@ -207,7 +207,7 @@ if (app.get('env') === 'production') {
 app.listen(app.get('port'), () => {
   log('-- %s App is running at %s:%d in %s mode', ok, info(os.hostname().toString()), app.get('port'), app.get('env'));
   log("-- %s User: %s on platform: %s",           ok, os.userInfo().username, os.platform().toString());
-  log("-- %s Beatriks - Full Localization System ITA/ENG (Enabled)", ok);
+  log("-- %s Beatriks - Full Self Localization System ITA/ENG (Enabled)", ok);
   log('-- %s Press %s to stop\n',                 ok, info('CTRL-C'));
 });
 module.exports = app;
