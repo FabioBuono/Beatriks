@@ -187,10 +187,10 @@ app.get(    '/auth/facebook',          passport.authenticate('facebook', { scope
 app.get(    '/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
 app.get(    '/auth/google',            passport.authenticate('google', { scope: 'profile email' }));
 app.get(    '/auth/google/callback',   passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login' }));
-app.get(    '/upload',           uploadController.getFileUpload);
-app.post(   '/upload',           uploadController.postFileUpload);
-app.get(    '/uploaded',         uploadController.getFileUploadOne);
-app.post(   '/uploaded',         uploadController.postFileUploadOne);
+app.get(    '/upload',           userController.ensureAuthenticated, uploadController.getFileUpload);
+app.post(   '/upload',           userController.ensureAuthenticated, uploadController.postFileUpload);
+app.get(    '/uploaded',         userController.ensureAuthenticated, uploadController.getFileUploadOne);
+app.post(   '/uploaded',         userController.ensureAuthenticated, uploadController.postFileUploadOne);
 
 app.all('*', (req, res) => {
    res.status(404).sendFile(path.join(__dirname + '/public/404.html'));
@@ -211,6 +211,9 @@ app.listen(app.get('port'), () => {
 });
 
 /*
+
+// HTTPS/SSL PRE-CODE
+
 // HTTPS CONFIGURATION
 const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
