@@ -25,6 +25,8 @@ const ok   = chalk.green('✓');
 const ex   = chalk.red('✗');
 // Load configuration from .env file
 dotenv.load();
+// Static Resources Directory
+const directoryToServe = 'public';
 // Controllers
 var HomeController = require('./controllers/home');
 var userController = require('./controllers/user');
@@ -122,7 +124,7 @@ app.disable('etag');
 /**  Staic Files Configuration  **/
 /*********************************/
 //Serve Static File
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, directoryToServe)));
 
 /*********************************/
 /**    HELMET CONFIGURATION    **/
@@ -206,4 +208,20 @@ app.listen(app.get('port'), () => {
   log("-- %s User: %s on platform: %s",           ok, os.userInfo().username, os.platform().toString());
   log('-- %s Press %s to stop\n',                 ok, info('CTRL-C'));
 });
+
+/*
+// HTTPS CONFIGURATION
+const httpsOptions = {
+  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
+  key:  fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'))
+}
+
+https.createServer(httpsOptions,app)
+  .listen(app.get('port'), () => {
+   log('-- %s App is running at %s:%d in %s mode', ok, info(os.hostname().toString()),app.get('port'),app.get('env'));
+   log("-- %s User: %s on platform: %s",           ok, os.userInfo().username, os.platform().toString());
+   log('-- %s Press %s to stop\n',                 ok, info('CTRL-C'));
+});
+*/
+
 module.exports = app;
