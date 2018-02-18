@@ -5,6 +5,7 @@ const helper = require('../helper/uploadHelper');
 
 // Multiple Files Upload Get 
 exports.getFileUpload = (req, res) => {
+  //Redundant Security Control
   if (req.isAuthenticated()) {
     res.render('account/upload', {
       user: req.user
@@ -14,6 +15,7 @@ exports.getFileUpload = (req, res) => {
 
 // Single Files Upload Get 
 exports.getFileUploadOne = (req, res) => {
+  //Redundant Security Control
   if (req.isAuthenticated()) {
     res.render('account/uploaded', {
       user: req.user
@@ -32,8 +34,7 @@ exports.postFileUploadOne = (req, res) => {
 
 
 /*
- TEST UNIQUE FUNCTION:
- 
+
  exports.uploadFile = (req, res) => {
   let mtd = req.method;
   let url = req.url;
@@ -55,21 +56,11 @@ exports.postFileUploadOne = (req, res) => {
         }
         break;
       default:
-        /* TO DO ERROR */
         break;
     } // switch
   } //Is not authenticated !!
 }
 */
-
-
-
-
-
-
-
-//https://evdokimovm.github.io/javascript/nodejs/expressjs/multer/2016/11/03/Upload-files-to-server-using-NodeJS-and-Multer-package-filter-upload-files-by-extension.html
-
 
 /*
 exports.postFileUpload = async (req, res) => {
